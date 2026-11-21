@@ -50,6 +50,23 @@ html.lenis, html.lenis body { height: auto; }
 canvas[data-shader] { display: block; width: 100%; height: 100%; }
 canvas[data-shader].is-fallback { background: radial-gradient(120% 80% at 50% 0%, var(--accent, #3b2a80) 0%, var(--bg, #0a0a0b) 60%); }
 
+
+/* ---------- Glyph window / particles (glyph-window.js, particles.js) ---------- */
+canvas[data-glyph-window], canvas[data-particles] { display: block; }
+canvas[data-particles] { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+
+/* ---------- Cursor creature + ink trail (cursor-creature.js) ----------
+   The trail draws over the section's content (like smoke passing in front of type). To put it behind,
+   give the content position:relative; z-index:2. */
+.sd-ink { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1; mix-blend-mode: var(--sd-ink-blend, normal); }
+.sd-creature { position: absolute; left: 0; top: 0; z-index: 3; pointer-events: none; will-change: transform; user-select: none; }
+[data-creature] { overflow: hidden; }
+
+/* ---------- Hide UI toggle (ui-toggle.js) ---------- */
+/* the transition is only switched on once the toggle is used, so it never fights GSAP entrance tweens */
+.sd-ui-anim [data-ui] { transition: opacity .6s cubic-bezier(.2,.8,.2,1), transform .6s cubic-bezier(.2,.8,.2,1), filter .6s; }
+.sd-ui-hidden [data-ui] { opacity: 0; transform: translateY(8px); filter: blur(6px); pointer-events: none; }
+
 /* ---------- Border light trace (Dark Signal) ----------
    <div class="sd-trace">…</div>  A light runs around the border. Pure CSS via @property. */
 @property --sd-angle { syntax: "<angle>"; inherits: false; initial-value: 0deg; }

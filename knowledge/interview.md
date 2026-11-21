@@ -61,7 +61,7 @@ Audience:         <who>
 First feeling:    <feel 1> + <feel 2>
 Personality:      <3 words>
 Art direction:    <primary direction> (+ <secondary accent direction>, if blending)
-Hero archetype:   <one of 5>
+Hero archetype:   <one of 6>
 Asset strategy:   <A/B/C/D> — <what exactly>
 Motion level:     <subtle / expressive / immersive>
 Signature moment: <the one thing people will remember>

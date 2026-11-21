@@ -39,6 +39,10 @@ The art direction decides the motion **personality** (`setMotion`). The brief de
 | View transitions | CSS + `transition()` | multi-page sites, case studies | — | low |
 | Shader background | `canvas[data-shader="flow\|grid\|grain"]` | Dark Signal, Immersive, strategy C | pages with a 3D scene | medium |
 | Three.js hero | `[data-three="knot\|blob\|monolith"]` | Immersive (required), product turntables | pages with a shader bg | high |
+| Glyph window | `canvas[data-glyph-window]` | Immersive, Retro, culture/language brands (doorway, moon, porthole) | more than one per page; behind text | medium |
+| Ambient particles | `canvas[data-particles]` | illustrated heroes, Organic, Cinematic | Swiss, Brutalist, over body text | low |
+| Cursor creature + ink trail | `[data-creature]` + `[data-creature-sprite]` | artist portfolios, playful brands with a real character, final CTA | forms, SaaS, more than one section | medium |
+| Hide UI toggle | `[data-ui-toggle]` + `[data-ui]` | image-led heroes | text-led heroes | low |
 | Border trace | `.sd-trace` | Dark Signal feature cards (1–2 max) | everything | low |
 | Film grain | `.sd-grain` | Cinematic, Editorial, Organic | Swiss, Dark Signal UI | low |
 | Glass | `.sd-glass` | nav and floating UI only | cards, sections | low |

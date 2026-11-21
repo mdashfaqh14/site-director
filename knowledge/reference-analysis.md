@@ -69,13 +69,14 @@ This file is the first piece of the skill's knowledge base. It is built from **m
 | Preloader with % counter | immersive sites | hides asset loading, sets the tone |
 | Custom cursor | agency and portfolio sites | personality and hover feedback |
 
-### Hero archetypes (5 observed)
+### Hero archetypes (6 observed)
 
 1. **Cinematic media hero:** full-bleed video or photo with the headline bottom-left (Displace, Spyker, Preymaker).
 2. **Minimal statement:** centred short line plus one striking visual and lots of air (Augen, Orior).
 3. **Product-UI hero:** left-aligned headline over a real interface shot on a soft wash (Interfere, Railway).
 4. **Immersive WebGL:** preloader then a 3D scene or game as the whole first screen (Podium, Cyera, Basement, Threejspunk).
 5. **Index or portfolio hero:** count plus filter pills plus an image grid (Budarina "Works (64)").
+6. **Illustrated world:** one still, art-directed illustration fills the screen, and exactly one object in it reacts to the cursor; ambient particles add depth (Marina Budarina's Framer heroes, Nov 2026; see the case study below).
 
 ### Length and pacing
 
@@ -105,6 +106,23 @@ The skill therefore needs an explicit **asset strategy step** in every brief. It
 8. Glass (`backdrop-filter`) only on navigation or floating UI.
 9. Alternate section density; include at least one pinned or sticky chapter on pages over 6,000 px.
 10. Decide the asset strategy (A–D) before writing any code.
+
+## 5b. Case study: two illustrated heroes (Marina Budarina, Nov 2026)
+
+Analysed frame by frame from two screen recordings.
+
+**"Your new house in tranquality" (Framer):** an AI-illustrated temple gate at night (teal mountains, moon, red walls, lanterns). The doorway arch is filled with a dense grid of red glyphs; the pointer leaves a fading red streak through them. Small petals drift across the sky. Minimal UI: centred dark glass pill nav, a "Show UI" pill, a mono eyebrow and a pixel display headline bottom-left.
+
+**"Interactive website for artist" (WIP):** off-white editorial frame with one red, giant mixed-script headline. The artist's own oni mask follows the cursor, tilting with its speed, dragging a thick blue smoke trail that dissolves (fluid simulation). A different creature and colour appear in the footer.
+
+**What makes them work:**
+1. The picture is still; motion is either ambient (particles, glints) or responsive (one object). Never both everywhere.
+2. The reactive object is the promise of the headline (a doorway "to a place you haven't seen"), so the interaction means something.
+3. The brand's own character becomes the cursor, so the site shows the work instead of describing it.
+4. Everything around the effect stays strict: one accent colour, one grid, tiny UI.
+5. Check AI-generated art for fake text (one viewer spotted gibberish characters on the gate's plaque).
+
+**Recipes derived:** `glyph-window.js`, `particles.js`, `cursor-creature.js`, `ui-toggle.js`. Demo: `examples/tidewright-illustrated` (different subject, art, palette and type; built to learn the pattern, not to copy it).
 
 ## 6. Next analysis passes
 

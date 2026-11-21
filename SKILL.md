@@ -35,7 +35,7 @@ Read `knowledge/art-directions.md`. From the answers:
 
 1. Shortlist 2–3 directions using the feel mapping and the personality words.
 2. Pick **one primary direction** (plus at most one element from a secondary direction, per the blending rule).
-3. Pick the hero archetype (cinematic media / minimal statement / product UI / immersive WebGL / index).
+3. Pick the hero archetype (cinematic media / minimal statement / product UI / immersive WebGL / index / illustrated world).
 4. Pick the asset strategy (A own assets / B generated images / C procedural visuals / D type-led).
 5. Define the **signature moment**: one specific, memorable interaction.
 
@@ -70,6 +70,7 @@ Build rules (from `reference-analysis.md`):
 3. Glass effects (`backdrop-filter`) only on navigation or floating UI.
 4. At most **one** WebGL moment per page, with a static image fallback and a performance budget (< 3 MB on first load, compressed assets).
 5. Pages longer than about 6,000px need at least one pinned/sticky chapter.
+6. **Illustrated-world heroes:** keep the illustration still and make exactly one object in it react to the cursor (`glyph-window` for a door, moon, window or screen), add one sparse `particles` layer for depth, and offer `ui-toggle` so visitors can see the art. If the brand has a real character, let it become the cursor in one section with `cursor-creature`. Check generated art for fake lettering.
 6. Alternate section density: dense → calm → dense.
 7. Every animation respects `prefers-reduced-motion`: replace movement with simple opacity changes or none.
 8. Real content or realistic placeholder copy written in the brand's voice. Never "Lorem ipsum", "John Doe", "Acme" or fake stats like "10,000+ users".

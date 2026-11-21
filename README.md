@@ -59,7 +59,10 @@ Each one is a complete design language: type pairings (free fonts), colour rules
 Works with any agent that supports skills (`SKILL.md`): Claude Code, Codex, Cursor and others.
 
 ```bash
-# Claude Code (project)
+# Any agent (Claude Code, Cursor, Codex, …), via the skills CLI
+npx skills add mdashfaqh14/site-director
+
+# Or clone it into a Claude Code project yourself
 git clone https://github.com/mdashfaqh14/site-director .claude/skills/site-director
 ```
 

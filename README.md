@@ -1,6 +1,24 @@
-# Site Director
+<h1 align="center">Site Director</h1>
 
-**Award-level art direction, motion and 3D for any AI coding agent.**
+<p align="center"><strong>Award-level art direction, motion and 3D for any AI coding agent.</strong></p>
+
+<p align="center">
+  <a href="https://mdashfaqh14.github.io/site-director/"><img src="assets/demo.gif" alt="Site Director website: cursor-reactive headline, one hero restyled through 10 art directions, an interview turning into a creative brief, and a live 3D demo" width="100%"></a>
+</p>
+
+<p align="center">
+  <a href="https://mdashfaqh14.github.io/site-director/"><b>Live website</b></a> ·
+  <a href="https://mdashfaqh14.github.io/site-director/examples/aurel-cinematic-3d/">Aurel (3D demo)</a> ·
+  <a href="https://mdashfaqh14.github.io/site-director/examples/tracewell-dark-signal/">Tracewell</a> ·
+  <a href="https://mdashfaqh14.github.io/site-director/examples/nordform-swiss/">Nordform</a> ·
+  <a href="assets/site-director-tour.mp4">Full 60s tour (MP4)</a>
+</p>
+
+<p align="center">
+  <img alt="License: MIT" src="https://img.shields.io/badge/license-MIT-ff3b00">
+  <img alt="Works with Claude Code, Codex, Cursor" src="https://img.shields.io/badge/works%20with-Claude%20Code%20%C2%B7%20Codex%20%C2%B7%20Cursor-0b0b0b">
+  <img alt="GSAP 3.15, Lenis 1.3, Three.js r187" src="https://img.shields.io/badge/stack-GSAP%20%C2%B7%20Lenis%20%C2%B7%20Three.js-f4f4f0">
+</p>
 
 Your agent can write code. It can't art-direct. Ask it for a website and you get the same page everyone gets: a purple gradient, three cards, fade-up on everything.
 

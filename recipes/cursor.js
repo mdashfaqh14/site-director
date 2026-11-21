@@ -92,8 +92,20 @@ export function hoverPreview(root = document) {
         gsap.to(frame, { autoAlpha: 1, scale: 1, duration: 0.35, ease: "power3.out" });
       });
     });
-    list.addEventListener("pointerleave", () =>
-      gsap.to(frame, { autoAlpha: 0, scale: 0.85, duration: 0.3, ease: "power2.in" })
+    const hide = () => gsap.to(frame, { autoAlpha: 0, scale: 0.85, duration: 0.3, ease: "power2.in", overwrite: "auto" });
+    list.addEventListener("pointerleave", hide);
+    // Scrolling moves the list without firing pointerleave, so re-check what is under the
+    // last known pointer position and hide the preview once it is no longer the list.
+    let px = -1, py = -1;
+    window.addEventListener("pointermove", (e) => ((px = e.clientX), (py = e.clientY)), { passive: true });
+    window.addEventListener(
+      "scroll",
+      () => {
+        if (!gsap.getProperty(frame, "autoAlpha")) return;
+        const under = document.elementFromPoint(px, py);
+        if (!under || !list.contains(under)) hide();
+      },
+      { passive: true }
     );
   });
 }

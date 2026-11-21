@@ -1,0 +1,103 @@
+/* effects.css: CSS-only effects and the styles the JS recipes rely on.
+   Import once. Every effect has a reduced-motion fallback at the bottom. */
+
+/* ---------- Lenis (required when setupSmoothScroll is used) ---------- */
+html.lenis, html.lenis body { height: auto; }
+.lenis.lenis-smooth { scroll-behavior: auto !important; }
+.lenis.lenis-stopped { overflow: clip; }
+
+/* ---------- Text reveal masks (text.js) ----------
+   SplitText's mask wrappers clip overflow; extend them so descenders (g, j, y) and accents aren't cut. */
+[data-reveal] div { padding-bottom: .14em; margin-bottom: -.14em; padding-top: .04em; margin-top: -.04em; }
+
+/* ---------- Custom cursor (cursor.js) ---------- */
+.has-custom-cursor, .has-custom-cursor a, .has-custom-cursor button { cursor: none; }
+.sd-cursor {
+  position: fixed; left: 0; top: 0; z-index: 9999; pointer-events: none;
+  width: 10px; height: 10px; margin: -5px 0 0 -5px; border-radius: 50%;
+  background: currentColor; color: var(--sd-cursor, #fff); mix-blend-mode: difference;
+  display: grid; place-items: center;
+  transition: width .35s cubic-bezier(.2,.8,.2,1), height .35s cubic-bezier(.2,.8,.2,1), margin .35s cubic-bezier(.2,.8,.2,1);
+}
+.sd-cursor.is-active { width: 44px; height: 44px; margin: -22px 0 0 -22px; }
+.sd-cursor.has-label { width: 88px; height: 88px; margin: -44px 0 0 -44px; mix-blend-mode: normal; background: var(--sd-cursor-bg, #fff); }
+.sd-cursor__label { font: 500 12px/1 var(--font-mono, ui-monospace, monospace); letter-spacing: .04em; text-transform: uppercase; color: var(--sd-cursor-ink, #000); opacity: 0; transition: opacity .2s; }
+.sd-cursor.has-label .sd-cursor__label { opacity: 1; }
+
+/* ---------- Hover preview (cursor.js) ---------- */
+.sd-preview {
+  position: fixed; left: 0; top: 0; z-index: 50; pointer-events: none;
+  width: min(28vw, 360px); aspect-ratio: 4 / 5; margin: calc(min(28vw, 360px) * -0.625) 0 0 calc(min(28vw, 360px) * -0.5);
+  visibility: hidden; opacity: 0; transform: scale(.85); overflow: hidden; border-radius: 2px;
+}
+.sd-preview img { width: 100%; height: 100%; object-fit: cover; }
+
+/* ---------- Preloader (preloader.js) ---------- */
+.sd-loader {
+  position: fixed; inset: 0; z-index: 10000; display: grid; place-items: end start; padding: 4vw;
+  background: var(--bg, #0a0a0a); color: var(--fg, #f2f2f2); clip-path: inset(0 0 0 0);
+}
+.sd-loader [data-loader-count] { font: 400 clamp(4rem, 14vw, 14rem)/.8 var(--font-display, sans-serif); letter-spacing: -.04em; font-variant-numeric: tabular-nums; }
+.sd-loader [data-loader-bar] { position: absolute; left: 0; bottom: 0; height: 2px; width: 100%; background: currentColor; transform: scaleX(0); transform-origin: left; }
+
+/* ---------- Three.js hero (three-hero.js) ---------- */
+.sd-three { position: relative; }
+.sd-three canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+.sd-three__fallback { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; transition: opacity .8s; }
+.sd-three.is-ready .sd-three__fallback { opacity: 0; }
+
+/* ---------- Shader canvas fallback (shader-bg.js) ---------- */
+canvas[data-shader] { display: block; width: 100%; height: 100%; }
+canvas[data-shader].is-fallback { background: radial-gradient(120% 80% at 50% 0%, var(--accent, #3b2a80) 0%, var(--bg, #0a0a0b) 60%); }
+
+/* ---------- Border light trace (Dark Signal) ----------
+   <div class="sd-trace">…</div>  A light runs around the border. Pure CSS via @property. */
+@property --sd-angle { syntax: "<angle>"; inherits: false; initial-value: 0deg; }
+.sd-trace { position: relative; border-radius: var(--radius, 12px); }
+.sd-trace::before {
+  content: ""; position: absolute; inset: -1px; border-radius: inherit; padding: 1px; pointer-events: none;
+  background: conic-gradient(from var(--sd-angle), transparent 0 70%, var(--accent, #7c5cff) 85%, transparent 100%);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor; mask-composite: exclude;
+  animation: sd-trace 4s linear infinite;
+}
+@keyframes sd-trace { to { --sd-angle: 360deg; } }
+
+/* ---------- Film grain overlay (Cinematic, Editorial, Organic) ----------
+   <div class="sd-grain" aria-hidden="true"></div> as the last child of <body>. */
+.sd-grain {
+  position: fixed; inset: -50%; z-index: 9000; pointer-events: none; opacity: var(--grain, .06);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  animation: sd-grain 1s steps(6) infinite;
+}
+@keyframes sd-grain { 0%{transform:translate(0,0)} 20%{transform:translate(-3%,2%)} 40%{transform:translate(2%,-4%)} 60%{transform:translate(-4%,-1%)} 80%{transform:translate(3%,3%)} }
+
+/* ---------- Mono label (used by most directions) ---------- */
+.sd-label { font: 400 .75rem/1.2 var(--font-mono, ui-monospace, monospace); letter-spacing: .02em; text-transform: uppercase; color: var(--muted, currentColor); }
+
+/* ---------- Underline that draws on hover ---------- */
+.sd-link { background: linear-gradient(currentColor 0 0) left bottom / 0% 1px no-repeat; transition: background-size .5s cubic-bezier(.2,.8,.2,1); text-decoration: none; }
+.sd-link:hover, .sd-link:focus-visible { background-size: 100% 1px; }
+
+/* ---------- Glass: navigation / floating UI only (rule 8) ---------- */
+.sd-glass { background: color-mix(in srgb, var(--bg, #fff) 62%, transparent); backdrop-filter: blur(14px) saturate(1.4); -webkit-backdrop-filter: blur(14px) saturate(1.4); }
+
+/* ---------- Page transitions (transitions.js) ----------
+   The full-page wipe is scoped to the "sd-page" transition type, so component-level transitions
+   (e.g. a view-transition-name on one element) don't wipe the whole page. */
+@view-transition { navigation: auto; types: sd-page; }
+html:active-view-transition-type(sd-page)::view-transition-old(root) { animation: sd-vt-out .5s cubic-bezier(.7,0,.3,1) both; }
+html:active-view-transition-type(sd-page)::view-transition-new(root) { animation: sd-vt-in .7s cubic-bezier(.7,0,.3,1) both; }
+@keyframes sd-vt-out { to { opacity: 0; transform: translateY(-2%); } }
+@keyframes sd-vt-in { from { clip-path: inset(100% 0 0 0); } to { clip-path: inset(0 0 0 0); } }
+
+/* ---------- Focus (never remove) ---------- */
+:focus-visible { outline: 2px solid var(--accent, currentColor); outline-offset: 3px; }
+
+/* ---------- Reduced motion ---------- */
+@media (prefers-reduced-motion: reduce) {
+  .sd-grain, .sd-trace::before { animation: none; }
+  ::view-transition-old(root), ::view-transition-new(root) { animation: none; }
+  .sd-cursor, .sd-preview { display: none; }
+  *, *::before, *::after { scroll-behavior: auto !important; }
+}

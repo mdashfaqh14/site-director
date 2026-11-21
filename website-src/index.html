@@ -1,0 +1,265 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Site Director: art direction for AI coding agents</title>
+  <meta name="description" content="An open-source agent skill that interviews you, writes a creative brief, and builds award-level websites with real motion and 3D, without the AI look." />
+  <link rel="stylesheet" href="./style.css" />
+</head>
+<body data-cursor-root>
+  <a class="skip" href="#main">Skip to content</a>
+  <div class="progress" data-progress aria-hidden="true"></div>
+
+  <header class="nav">
+    <a class="logo" href="#" aria-label="Site Director home">site<span>/</span>director</a>
+    <nav aria-label="Primary">
+      <ul class="nav__links">
+        <li><a class="sd-link" href="#brief">Process</a></li>
+        <li><a class="sd-link" href="#demos">Demos</a></li>
+        <li><a class="sd-link" href="#play">Playground</a></li>
+        <li><a class="sd-link" href="#data">Data</a></li>
+      </ul>
+    </nav>
+    <a class="btn btn--small" href="#install" data-magnetic="0.25">Get the skill</a>
+  </header>
+
+  <main id="main">
+    <!-- ============ HERO ============ -->
+    <section class="hero">
+      <div class="hero__glow" aria-hidden="true"></div>
+      <div class="hero__top">
+        <span class="mono label"><span class="dot" aria-hidden="true"></span>Open-source agent skill · v0.4 · MIT</span>
+        <span class="mono label hero__works">Claude Code · Codex · Cursor · any SKILL.md agent</span>
+      </div>
+      <h1 class="hero__title" id="hero-title" aria-label="Websites with a point of view.">Websites with a point of view.</h1>
+      <div class="hero__row">
+        <p class="hero__lede" data-reveal="words" data-start="top 100%">Your coding agent can write code. It can't art-direct. Site Director gives it a studio's whole process: an interview, a creative brief, a tested motion &amp; 3D library, and a quality gate that rejects the default AI look.</p>
+        <div class="hero__ctas">
+          <a class="btn" href="#install" data-magnetic="0.2">Install the skill</a>
+          <a class="btn btn--ghost" href="#demos">Watch it work →</a>
+        </div>
+      </div>
+      <p class="hero__hint mono label" aria-hidden="true">Move your cursor across the headline</p>
+
+      <!-- SIGNATURE: one hero, ten art directions -->
+      <figure class="switcher" aria-label="Live preview: the same hero restyled in each art direction">
+        <div class="switcher__frame">
+          <div class="switcher__bar mono"><span></span><span></span><span></span><b id="spec-url">yourbrand.com</b><em id="spec-count">01 / 10</em></div>
+          <div class="spec" id="spec">
+            <div class="spec__nav"><span class="spec__brand">Your brand</span><span class="spec__links"><i></i><i></i><i></i></span></div>
+            <div class="spec__body">
+              <span class="spec__kicker" id="spec-kicker">Swiss Precision</span>
+              <p class="spec__title">Make it unforgettable.</p>
+              <div class="spec__foot"><span class="spec__btn">Start a project</span><span class="spec__shape" aria-hidden="true"></span></div>
+            </div>
+          </div>
+        </div>
+        <figcaption class="switcher__ui">
+          <div class="chips" role="tablist" aria-label="Art directions" id="chips"></div>
+          <dl class="tokens mono" id="tokens" aria-live="polite"></dl>
+        </figcaption>
+      </figure>
+    </section>
+
+    <!-- ============ PROBLEM ============ -->
+    <section class="problem">
+      <div class="problem__art" aria-label="Illustration of the generic AI-generated website">
+        <div class="slop">
+          <div class="slop__hero"><b></b><i></i><i class="short"></i><span></span></div>
+          <div class="slop__cards"><div><u></u><i></i><i></i></div><div><u></u><i></i><i></i></div><div><u></u><i></i><i></i></div></div>
+          <div class="slop__x" aria-hidden="true"></div>
+        </div>
+        <span class="mono label">Illustration: the page every agent ships by default</span>
+      </div>
+      <div class="problem__text">
+        <span class="mono label">(01) The problem</span>
+        <h2 data-reveal="lines">Ask an agent for a website and you get the same page everyone gets.</h2>
+        <p data-reveal="words">A purple gradient. A centred headline. Three identical cards. Fade-up on everything. Models aren't short of ability. They're short of a director, so they fall back to the average of everything they've seen.</p>
+      </div>
+    </section>
+
+    <!-- ============ INTERVIEW → BRIEF (pinned scene) ============ -->
+    <section class="brief" id="brief" aria-labelledby="brief-title">
+      <div class="brief__head">
+        <span class="mono label">(02) The process</span>
+        <h2 id="brief-title" data-reveal="lines">Four answers in. A creative brief out.</h2>
+      </div>
+      <div class="brief__stage" id="brief-stage">
+        <ol class="chat" aria-label="Interview">
+          <li class="chat__q" data-b="1">What is it, and who is it for?</li>
+          <li class="chat__a" data-b="1">A fragrance house. People who buy scent as art.</li>
+          <li class="chat__q" data-b="2">What should visitors feel in 3 seconds?</li>
+          <li class="chat__a" data-b="2">Desire. And a little awe.</li>
+          <li class="chat__q" data-b="3">Three words for its personality?</li>
+          <li class="chat__a" data-b="3">Slow, golden, intimate.</li>
+          <li class="chat__q" data-b="4">What visuals do you have?</li>
+          <li class="chat__a" data-b="4">Nothing yet. Make them in code.</li>
+        </ol>
+        <article class="card" aria-label="Generated creative brief">
+          <header class="card__head mono"><span>CREATIVE BRIEF</span><span class="card__status" id="brief-status">drafting…</span></header>
+          <dl class="card__rows mono">
+            <div data-b="1"><dt>Brand</dt><dd>Aurel, fragrance house</dd></div>
+            <div data-b="2"><dt>First feeling</dt><dd>desire + awe</dd></div>
+            <div data-b="3"><dt>Direction</dt><dd><strong>Cinematic Luxury</strong> + Immersive 3D</dd></div>
+            <div data-b="3"><dt>Motion</dt><dd>cinematic · expo.inOut · 1.4s</dd></div>
+            <div data-b="4"><dt>Assets</dt><dd>C, procedural: Three.js sculpture</dd></div>
+            <div data-b="4"><dt>Hero</dt><dd>immersive WebGL</dd></div>
+            <div data-b="5" class="card__sig"><dt>Signature</dt><dd>a gold sculpture turns in front of a giant title</dd></div>
+          </dl>
+          <a class="card__cta mono" href="#demos" data-b="5">See the result →</a>
+        </article>
+      </div>
+      <ol class="steps" aria-label="The five steps">
+        <li><span>01</span>Interview</li><li><span>02</span>Brief</li><li><span>03</span>Build</li><li><span>04</span>Check</li><li><span>05</span>Remember</li>
+      </ol>
+    </section>
+
+    <!-- ============ DEMOS ============ -->
+    <section class="demos" id="demos" aria-labelledby="demos-title">
+      <div class="demos__head">
+        <span class="mono label">(03) Demos</span>
+        <h2 id="demos-title" data-reveal="lines">Same skill. Three different worlds.</h2>
+        <p>Every demo below was produced by following the skill, brief first. Fictional brands, real code. Open them live.</p>
+      </div>
+      <div class="demos__grid">
+        <article class="demo demo--a" data-demo="examples/aurel-cinematic-3d/index.html" data-title="Aurel">
+          <button class="demo__media" data-clip="up" data-cursor="Play live" aria-label="Open the Aurel demo live">
+            <img src="./img/aurel.jpg" alt="Aurel demo: liquid-gold 3D sculpture in front of the giant title LATE LIGHT" width="960" height="600" loading="lazy" />
+            <span class="demo__play mono">▶ Live</span>
+          </button>
+          <div class="demo__meta"><span class="mono label">Cinematic Luxury + 3D</span><h3>Aurel</h3><p>A liquid-gold sculpture turns in front of a giant title as you scroll.</p></div>
+        </article>
+        <article class="demo demo--b" data-demo="examples/tracewell-dark-signal/index.html" data-title="Tracewell">
+          <button class="demo__media" data-clip="up" data-cursor="Play live" aria-label="Open the Tracewell demo live">
+            <img src="./img/tracewell.jpg" alt="Tracewell demo: dark hero with acid-green accent over a glowing perspective grid" width="960" height="600" loading="lazy" />
+            <span class="demo__play mono">▶ Live</span>
+          </button>
+          <div class="demo__meta"><span class="mono label">Dark Signal</span><h3>Tracewell</h3><p>An agent session replays, and its false "fixed" claim gets caught.</p></div>
+        </article>
+        <article class="demo demo--c" data-demo="examples/nordform-swiss/index.html" data-title="Nordform">
+          <button class="demo__media" data-clip="up" data-cursor="Play live" aria-label="Open the Nordform demo live">
+            <img src="./img/nordform.jpg" alt="Nordform demo: giant black headline 'Buildings that hold their silence.' on off-white" width="960" height="600" loading="lazy" />
+            <span class="demo__play mono">▶ Live</span>
+          </button>
+          <div class="demo__meta"><span class="mono label">Swiss Precision</span><h3>Nordform</h3><p>A project index where a drawn building follows your cursor.</p></div>
+        </article>
+      </div>
+    </section>
+
+    <!-- ============ PLAYGROUND ============ -->
+    <section class="play" id="play" aria-labelledby="play-title">
+      <div class="play__head">
+        <span class="mono label">(04) Recipe playground</span>
+        <h2 id="play-title" data-reveal="lines">Hover. Every tile is a recipe your agent gets.</h2>
+        <p>20+ tested effects, driven by plain HTML attributes. Each one respects reduced motion and switches off on touch where it should.</p>
+      </div>
+      <div class="tiles">
+        <div class="tile tile--wide" data-replay="lines">
+          <code class="tile__code">data-reveal="lines"</code>
+          <p class="tile__big" id="tile-lines">Lines rise out of a mask, one by one.</p>
+        </div>
+        <div class="tile" data-replay="iris">
+          <code class="tile__code">data-clip="iris"</code>
+          <div class="tile__iris" id="tile-iris"></div>
+        </div>
+        <div class="tile tile--center">
+          <code class="tile__code">data-magnetic="0.5"</code>
+          <button class="tile__magnet" data-magnetic="0.5" data-cursor="Pull">Pull me</button>
+        </div>
+        <div class="tile" data-replay="scramble">
+          <code class="tile__code">data-scramble</code>
+          <p class="tile__mono" id="tile-scramble">SIGNAL ACQUIRED</p>
+        </div>
+        <div class="tile tile--tall">
+          <code class="tile__code">data-hover-preview</code>
+          <ul class="tile__list" data-hover-preview>
+            <li data-preview="./img/aurel.jpg">Aurel <span class="mono">3D</span></li>
+            <li data-preview="./img/tracewell.jpg">Tracewell <span class="mono">Signal</span></li>
+            <li data-preview="./img/nordform-index.jpg">Nordform <span class="mono">Swiss</span></li>
+            <li data-preview="./img/aurel-notes.jpg">Aurel notes <span class="mono">Scroll</span></li>
+          </ul>
+        </div>
+        <div class="tile" data-replay="count">
+          <code class="tile__code">data-count="1280"</code>
+          <p class="tile__num"><span id="tile-count">1,280</span></p>
+        </div>
+        <div class="tile sd-trace">
+          <code class="tile__code">class="sd-trace"</code>
+          <p class="tile__small">A light runs the border. Pure CSS.</p>
+        </div>
+        <div class="tile tile--wide tile--skew">
+          <code class="tile__code">data-kinetic</code>
+          <p class="tile__skew" data-kinetic>Scroll fast. I lean.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ DATA ============ -->
+    <section class="data" id="data" aria-labelledby="data-title">
+      <div class="data__head">
+        <span class="mono label">(05) The data</span>
+        <h2 id="data-title" data-reveal="lines">Built on measurements, not vibes.</h2>
+        <p>We opened award-winning sites from Awwwards, Godly, Dark.design, Land-book and MaxiBestOf in a real browser and measured what they actually do. The rules come from what we found.</p>
+      </div>
+      <dl class="stats">
+        <div><dt>sites measured in the first pass</dt><dd><span data-count="17">0</span></dd></div>
+        <div><dt>used clip-path masks for reveals</dt><dd><span data-count="12">0</span>/17</dd></div>
+        <div><dt>used Lenis smooth scroll</dt><dd><span data-count="7">0</span>/17</dd></div>
+        <div><dt>used WebGL as one signature moment</dt><dd><span data-count="7">0</span>/17</dd></div>
+        <div class="stats__wide"><dt>display letter-spacing on the winners</dt><dd>−2% to −4.5%</dd></div>
+      </dl>
+    </section>
+
+    <!-- ============ MARQUEE ============ -->
+    <section class="recipes" aria-label="Art directions">
+      <div class="recipes__row" data-marquee="40" data-kinetic>
+        <span>Swiss Precision</span><i>✳</i><span>Cinematic Luxury</span><i>✳</i><span>Dark Signal</span><i>✳</i><span>Editorial Serif</span><i>✳</i><span>Immersive Spatial</span><i>✳</i><span>Kinetic Type</span><i>✳</i><span>Soft Tech Minimal</span><i>✳</i><span>Brutalist Raw</span><i>✳</i><span>Retro Terminal</span><i>✳</i><span>Organic Warm</span><i>✳</i>
+      </div>
+    </section>
+
+    <!-- ============ INSTALL ============ -->
+    <section class="install" id="install">
+      <span class="mono label">(06) Install</span>
+      <h2 class="install__title" data-reveal="lines">Stop shipping the default.</h2>
+      <div class="term">
+        <div class="term__bar mono"><span></span><span></span><span></span><b>terminal</b></div>
+        <pre class="term__body mono"><code><span class="term__p">$</span> git clone https://github.com/mdashfaqh14/site-director \
+    .claude/skills/site-director
+<span class="term__c"># then ask your agent:</span>
+<span class="term__p">›</span> Use site-director to build a website for my studio.</code></pre>
+        <button class="btn btn--small term__copy copy" data-copy="git clone https://github.com/mdashfaqh14/site-director .claude/skills/site-director"><span>Copy</span><span class="copy__state mono" aria-live="polite"></span></button>
+      </div>
+      <ol class="install__steps">
+        <li><span class="mono">1</span>Clone into your agent's skills folder.</li>
+        <li><span class="mono">2</span>Ask for a website. Answer four questions.</li>
+        <li><span class="mono">3</span>Approve the brief. Watch it build, check and remember.</li>
+      </ol>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <p class="footer__mark" aria-hidden="true">site/director</p>
+    <div class="footer__row mono">
+      <span>MIT licensed · works with any SKILL.md agent</span>
+      <span>This page was built with Site Director · direction: Kinetic Type</span>
+      <a class="sd-link" href="#main">Top ↑</a>
+    </div>
+  </footer>
+
+  <!-- Live demo viewer -->
+  <dialog class="viewer" id="viewer" aria-labelledby="viewer-title">
+    <div class="viewer__bar mono">
+      <span id="viewer-title">Demo</span>
+      <div class="viewer__actions">
+        <a id="viewer-open" href="#" target="_blank" rel="noopener" class="sd-link">Open in new tab ↗</a>
+        <button class="viewer__close" id="viewer-close" aria-label="Close demo">Close ✕</button>
+      </div>
+    </div>
+    <iframe id="viewer-frame" title="Live demo" loading="lazy"></iframe>
+  </dialog>
+
+  <div class="sd-grain" aria-hidden="true"></div>
+  <script type="module" src="./main.js"></script>
+</body>
+</html>

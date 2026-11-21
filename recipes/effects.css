@@ -94,10 +94,16 @@ html:active-view-transition-type(sd-page)::view-transition-new(root) { animation
 /* ---------- Focus (never remove) ---------- */
 :focus-visible { outline: 2px solid var(--accent, currentColor); outline-offset: 3px; }
 
-/* ---------- Reduced motion ---------- */
+/* ---------- Reduced motion (unless the visitor opted in via motionToggle) ---------- */
 @media (prefers-reduced-motion: reduce) {
-  .sd-grain, .sd-trace::before { animation: none; }
-  ::view-transition-old(root), ::view-transition-new(root) { animation: none; }
-  .sd-cursor, .sd-preview { display: none; }
-  *, *::before, *::after { scroll-behavior: auto !important; }
+  html:not(.sd-motion-on) .sd-grain, html:not(.sd-motion-on) .sd-trace::before { animation: none; }
+  html:not(.sd-motion-on)::view-transition-old(root), html:not(.sd-motion-on)::view-transition-new(root) { animation: none; }
+  html:not(.sd-motion-on) .sd-cursor, html:not(.sd-motion-on) .sd-preview { display: none; }
+  html:not(.sd-motion-on) *, html:not(.sd-motion-on) *::before, html:not(.sd-motion-on) *::after { scroll-behavior: auto !important; }
 }
+
+/* ---------- Motion toggle pill (core.js motionToggle) ---------- */
+.motion-pill { position: fixed; left: 16px; bottom: 16px; z-index: 9500; display: flex; align-items: center; gap: 10px; padding: 8px 8px 8px 16px; border-radius: 999px; background: #161616ee; color: #e8e8e2; font: 400 .8rem system-ui, sans-serif; box-shadow: 0 16px 40px -16px #000; max-width: calc(100vw - 32px); }
+.motion-pill[hidden] { display: none; }
+.motion-pill button { border: 0; border-radius: 999px; padding: 8px 14px; background: #f4f4f0; color: #111; font: 600 .8rem system-ui, sans-serif; cursor: pointer; white-space: nowrap; }
+.motion-pill button.ghost { background: transparent; color: #a0a09a; padding: 8px 10px; }

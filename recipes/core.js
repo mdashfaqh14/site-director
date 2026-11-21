@@ -17,10 +17,55 @@ gsap.registerPlugin(ScrollTrigger, SplitText);
 
 export { gsap, ScrollTrigger, SplitText };
 
-/** True when the user asked the OS for less motion. Re-check on demand. */
-export const reducedMotion = () =>
-  typeof window !== "undefined" &&
-  window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+/* ---------- Reduced motion, with a visitor opt-in ----------
+ * The OS setting is respected by default. Many people have it on without knowing
+ * (e.g. Windows "Adjust for best performance"), so motionToggle() offers a one-click
+ * "turn effects on" that is remembered in localStorage for this site.
+ */
+const MOTION_KEY = "sd-motion";
+const store = {
+  get: () => { try { return localStorage.getItem(MOTION_KEY); } catch { return null; } },
+  set: (v) => { try { v ? localStorage.setItem(MOTION_KEY, v) : localStorage.removeItem(MOTION_KEY); } catch {} },
+};
+
+/** True when the operating system asks for less motion. */
+export const systemReducedMotion = () =>
+  typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+/** True when this visitor chose to turn effects on despite the system setting. */
+export const motionOverride = () => store.get() === "on";
+
+/** True when effects should be reduced: system asks for it and the visitor hasn't opted in. */
+export const reducedMotion = () => systemReducedMotion() && !motionOverride();
+
+if (typeof document !== "undefined" && motionOverride()) document.documentElement.classList.add("sd-motion-on");
+
+/**
+ * Shows a small pill only to visitors whose system has reduced motion on.
+ * Markup (optional): <div class="motion-pill" id="motion-pill" hidden></div>; created if missing.
+ */
+export function motionToggle(el = document.getElementById("motion-pill")) {
+  if (!systemReducedMotion()) return;
+  if (!el) {
+    el = document.createElement("div");
+    el.className = "motion-pill";
+    document.body.append(el);
+  }
+  const render = () => {
+    const on = motionOverride();
+    el.innerHTML = on
+      ? `<span>Effects are on.</span><button type="button" class="ghost" data-act="off">Use my system setting</button>`
+      : `<span>Your system has reduced motion on.</span><button type="button" data-act="on">Turn effects on</button><button type="button" class="ghost" data-act="close" aria-label="Dismiss">✕</button>`;
+    el.hidden = false;
+  };
+  el.addEventListener("click", (e) => {
+    const act = e.target.closest("button")?.dataset.act;
+    if (act === "on") { store.set("on"); location.reload(); }
+    if (act === "off") { store.set(null); location.reload(); }
+    if (act === "close") el.hidden = true;
+  });
+  render();
+}
 
 /** True on touch-first devices, where cursor effects should be disabled. */
 export const isTouch = () =>

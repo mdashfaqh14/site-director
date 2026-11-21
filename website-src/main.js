@@ -168,11 +168,157 @@ apply(0);
    3. Problem: strike through the default
    ========================================================= */
 function initProblem() {
-  if (RM) return;
-  gsap.fromTo(".slop__x", { clipPath: "inset(0 100% 0 0)" }, {
-    clipPath: "inset(0 0% 0 0)", duration: 0.9, ease: "expo.inOut",
-    scrollTrigger: { trigger: ".slop", start: "top 60%", once: true },
+  const stage = document.getElementById("problem-stage");
+  const items = [...stage.querySelectorAll(".cliches li")];
+  const parts = (c) => stage.querySelectorAll(`.mock [data-c="${c}"]`);
+  const strike = stage.querySelector(".mock__strike");
+  const verdict = document.getElementById("mock-verdict");
+  const page = stage.querySelector(".mock__page");
+  if (RM) {
+    items.forEach((li) => li.classList.add("is-on"));
+    gsap.set(strike, { scaleX: 1, rotate: -9 });
+    gsap.set(verdict, { opacity: 1 });
+    return;
+  }
+  const build = (tl) => {
+    gsap.set(items, { opacity: 0.22 });
+    gsap.set(stage.querySelectorAll(".mock [data-c]"), { autoAlpha: 0, y: 24 });
+    gsap.set(verdict, { opacity: 0, y: 10 });
+    gsap.set(strike, { rotate: -9, scaleX: 0, transformOrigin: "left center" });
+    for (let c = 1; c <= 5; c++) {
+      tl.to(items[c - 1], { opacity: 1, duration: 0.3, onStart: () => items[c - 1].classList.add("is-on"), onReverseComplete: () => items[c - 1].classList.remove("is-on") })
+        .to(parts(c), { autoAlpha: 1, y: 0, duration: 0.5, ease: "power3.out" }, "<");
+    }
+    tl.to(strike, { scaleX: 1, duration: 0.6, ease: "expo.inOut" }, "+=0.2")
+      .to(page, { opacity: 0.45, filter: "grayscale(1)", duration: 0.4 }, "<0.3")
+      .to(verdict, { opacity: 1, y: 0, duration: 0.4 }, "<0.1")
+      .to({}, { duration: 0.4 });
+  };
+  const mm = gsap.matchMedia();
+  mm.add("(min-width: 960px)", () => {
+    const tl = gsap.timeline({ scrollTrigger: { trigger: stage, start: "center center", end: "+=200%", pin: true, scrub: 0.6 } });
+    build(tl);
+    return () => gsap.set([items, stage.querySelectorAll(".mock [data-c]"), strike, verdict, page], { clearProps: "all" });
   });
+  mm.add("(max-width: 959px)", () => {
+    const tl = gsap.timeline({ scrollTrigger: { trigger: stage, start: "top 75%", end: "bottom 60%", scrub: 0.6 } });
+    build(tl);
+  });
+}
+
+/* =========================================================
+   3b. Demos: full-screen cards stack over each other
+   ========================================================= */
+function initDemos() {
+  const cards = [...document.querySelectorAll(".scard")];
+  cards.forEach((card) => {
+    const dim = document.createElement("div");
+    dim.className = "scard__dim";
+    card.append(dim);
+  });
+  if (RM) return;
+  const desktop = matchMedia("(min-width: 960px)").matches;
+  if (desktop) cards.slice(0, -1).forEach((card, i) => {
+    const next = cards[i + 1];
+    gsap.to(card, { scale: 0.92, ease: "none", scrollTrigger: { trigger: next, start: "top bottom", end: "top 78px", scrub: true } });
+    gsap.to(card.querySelector(".scard__dim"), { opacity: 0.55, ease: "none", scrollTrigger: { trigger: next, start: "top bottom", end: "top 78px", scrub: true } });
+  });
+  cards.forEach((card) => {
+    gsap.from(card.querySelectorAll(".scard__title, .scard__sig, .scard__chips li, .scard__ctas, .scard__frame"), {
+      y: 40, autoAlpha: 0, duration: 0.8, ease: "expo.out", stagger: 0.06,
+      scrollTrigger: { trigger: card, start: "top 60%", once: true },
+    });
+    gsap.fromTo(card.querySelector(".scard__img"), { yPercent: 0 }, { yPercent: -6, ease: "none", scrollTrigger: { trigger: card, start: "top bottom", end: "bottom top", scrub: true } });
+  });
+}
+
+/* =========================================================
+   3c. Data: 17-dot unit charts + letter-spacing strip
+   ========================================================= */
+const SITES = ["Displace", "Augen", "Interfere", "Podium", "Orior AI", "Dirt", "Superpower", "Area", "Avara", "Threejs-Punk", "Preymaker", "Cyera", "Zirka", "Spyker", "Railway", "basement.studio", "Marina Budarina"];
+const FINDINGS = [
+  { label: "Clip-path masks for reveals", note: "wipes and masks, not opacity fades", has: ["Displace", "Interfere", "Podium", "Orior AI", "Superpower", "Area", "Avara", "Preymaker", "Cyera", "Zirka", "Spyker", "Railway"] },
+  { label: "A monospace label font", note: "paired with the display face", has: ["Displace", "Interfere", "Dirt", "Superpower", "Zirka", "Railway", "basement.studio", "Marina Budarina"] },
+  { label: "Video as a core material", note: "up to 27 videos on one page", has: ["Displace", "Podium", "Orior AI", "Dirt", "Preymaker", "Zirka", "Spyker", "Marina Budarina"] },
+  { label: "Lenis smooth scroll", note: "the motion foundation", has: ["Displace", "Augen", "Podium", "Dirt", "Superpower", "Zirka", "Spyker"] },
+  { label: "WebGL, used once", note: "a single signature moment", has: ["Displace", "Podium", "Threejs-Punk", "Cyera", "Zirka", "Railway", "basement.studio"] },
+  { label: "GSAP detected", note: "minimum: bundles often hide it", has: ["Superpower", "Preymaker", "Zirka", "Spyker", "basement.studio"] },
+];
+const TRACKING = [["Displace", -4.5], ["Orior AI", -4.0], ["basement.studio", -4.0], ["Railway", -3.6], ["Zirka", -2.8], ["Augen", -2.0], ["Superpower", -2.0], ["Preymaker", -2.0], ["Interfere", -1.0], ["Spyker", 4.0]];
+
+function initData() {
+  const tip = document.createElement("div");
+  tip.className = "tip";
+  document.body.append(tip);
+  const show = (el, html) => {
+    const r = el.getBoundingClientRect();
+    tip.innerHTML = html;
+    tip.style.left = r.left + r.width / 2 + "px";
+    tip.style.top = r.top + "px";
+    tip.classList.add("show");
+  };
+  const hide = () => tip.classList.remove("show");
+  addEventListener("scroll", hide, { passive: true });
+
+  const units = document.getElementById("units");
+  units.innerHTML = FINDINGS.map((f) => {
+    const order = [...f.has, ...SITES.filter((s) => !f.has.includes(s))];
+    const dots = order.map((site) => {
+      const yes = f.has.includes(site);
+      return `<span class="udot" tabindex="0" data-yes="${yes}" data-site="${site}" role="img" aria-label="${site}: ${yes ? "yes" : "no"}"></span>`;
+    }).join("");
+    return `<div class="unit"><div class="unit__label"><b>${f.label}</b><span>${f.note}</span></div>
+      <p class="unit__count"><span class="unit__n" data-n="${f.has.length}">0</span><small>/17</small></p>
+      <div class="dots" role="group" aria-label="${f.label}: ${f.has.length} of 17 sites">${dots}</div></div>`;
+  }).join("");
+  units.querySelectorAll(".udot").forEach((d) => {
+    const html = `${d.dataset.site} · <b>${d.dataset.yes === "true" ? "yes" : "no"}</b>`;
+    d.addEventListener("pointerenter", () => show(d, html));
+    d.addEventListener("focus", () => show(d, html));
+    d.addEventListener("pointerleave", hide);
+    d.addEventListener("blur", hide);
+  });
+  units.querySelectorAll(".unit").forEach((row) => {
+    const lit = row.querySelectorAll('.udot[data-yes="true"]');
+    const n = row.querySelector(".unit__n");
+    if (RM) {
+      lit.forEach((d) => d.classList.add("on"));
+      n.textContent = n.dataset.n;
+      return;
+    }
+    ScrollTrigger.create({
+      trigger: row, start: "top 82%", once: true,
+      onEnter: () => {
+        lit.forEach((d, k) => setTimeout(() => d.classList.add("on"), k * 55));
+        const o = { v: 0 };
+        gsap.to(o, { v: +n.dataset.n, duration: lit.length * 0.055 + 0.2, ease: "none", onUpdate: () => (n.textContent = Math.round(o.v)) });
+      },
+    });
+  });
+
+  // Letter-spacing strip: −5% … +5%
+  const axis = document.getElementById("track-axis");
+  const x = (v) => ((v + 5) / 10) * 100;
+  let html = `<div class="track__band" style="left:${x(-4.5)}%;width:${x(-2) - x(-4.5)}%"></div>`;
+  html += `<span class="track__bandlabel" style="left:${(x(-4.5) + x(-2)) / 2}%">most winners: −2% to −4.5%</span>`;
+  html += `<div class="track__line"></div>`;
+  [-5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5].forEach((t) => (html += `<span class="track__tick" style="left:${x(t)}%">${t > 0 ? "+" : t < 0 ? "−" : ""}${Math.abs(t)}%</span>`));
+  const seen = {};
+  TRACKING.forEach(([site, v]) => {
+    const k = v.toFixed(1);
+    const stack = (seen[k] = (seen[k] ?? -1) + 1);
+    html += `<span class="track__mark" tabindex="0" role="img" aria-label="${site}: ${v}%" data-site="${site}" data-v="${v}" style="left:${x(v)}%;top:${71 - stack * 18}px"></span>`;
+  });
+  html += `<span class="track__name" style="left:${x(4)}%">Spyker: condensed caps</span>`;
+  axis.innerHTML = html;
+  axis.querySelectorAll(".track__mark").forEach((m) => {
+    const t = `${m.dataset.site} · <b>${m.dataset.v > 0 ? "+" : ""}${m.dataset.v}%</b>`;
+    m.addEventListener("pointerenter", () => show(m, t));
+    m.addEventListener("focus", () => show(m, t));
+    m.addEventListener("pointerleave", hide);
+    m.addEventListener("blur", hide);
+  });
+  if (!RM) gsap.from(axis.querySelectorAll(".track__mark"), { scale: 0, duration: 0.5, ease: "back.out(2)", stagger: 0.05, scrollTrigger: { trigger: axis, start: "top 85%", once: true } });
 }
 
 /* =========================================================
@@ -225,7 +371,7 @@ function initViewer() {
   const title = document.getElementById("viewer-title");
   let lastFocus = null;
   document.querySelectorAll("[data-demo]").forEach((card) => {
-    card.querySelector(".demo__media").addEventListener("click", () => {
+    card.querySelector(".scard__play").addEventListener("click", () => {
       lastFocus = document.activeElement;
       frame.src = card.dataset.demo;
       open.href = card.dataset.demo;
@@ -308,10 +454,13 @@ document.fonts.ready.then(() => {
 initViewer();
 initSite({
   motion: "snappy",
+  toggle: true,
   smooth: { lerp: 0.1 },
   onReady() {
     initProblem();
     initBrief();
+    initDemos();
+    initData();
     ScrollTrigger.refresh();
   },
 });

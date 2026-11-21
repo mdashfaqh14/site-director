@@ -4,11 +4,12 @@
  *   import { initSite } from "./recipes/index.js";
  *   import "./recipes/effects.css";
  *   initSite({ motion: "cinematic", smooth: { lerp: 0.08 }, preloader: true });
+ *   (toggle: true by default: visitors with OS reduced motion get a "Turn effects on" pill)
  *
  * Order matters: smooth scroll → preloader → text/reveals → scroll choreography → cursor → WebGL.
  * ScrollTrigger is refreshed at the end so pinned sections measure correctly.
  */
-import { setMotion, setupSmoothScroll, ScrollTrigger } from "./core.js";
+import { setMotion, setupSmoothScroll, ScrollTrigger, motionToggle } from "./core.js";
 import { initText } from "./text.js";
 import { initReveal } from "./reveal.js";
 import { initScroll } from "./scroll.js";
@@ -16,8 +17,9 @@ import { initCursor } from "./cursor.js";
 import { runPreloader } from "./preloader.js";
 import { initShaders } from "./shader-bg.js";
 
-export async function initSite({ motion = "precise", smooth = {}, preloader = false, onReady } = {}) {
+export async function initSite({ motion = "precise", smooth = {}, preloader = false, toggle = true, onReady } = {}) {
   setMotion(motion);
+  if (toggle) motionToggle();
   if (smooth !== false) setupSmoothScroll(smooth);
   if (preloader) await runPreloader();
   initShaders();

@@ -12,6 +12,8 @@
  *
  * Markup:
  *   <section data-creature data-trail="#1b2a6b" data-trail-edge="#7d8fc9" data-trail-size="60">
+ *   (data-creature="page" on a wrapper: creature + trail are fixed to the viewport and roam the whole
+ *    wrapper, e.g. every section except the hero; they hide when the wrapper is mostly off screen)
  *     <img data-creature-sprite src="creature.svg" alt="" width="160">   (or an inline <svg data-creature-sprite>)
  *     …content…
  *   </section>
@@ -152,15 +154,20 @@ export function cursorCreature(section, opts = {}) {
   if (!sprite) return null;
   const color = opts.trail || section.dataset.trail || "#1b2a6b";
   const edge = opts.edge || section.dataset.trailEdge || color;
-  if (getComputedStyle(section).position === "static") section.style.position = "relative";
+  // data-creature="page": the creature and trail live in the viewport (position: fixed) and follow the
+  // pointer anywhere over this element, e.g. a wrapper around everything except the hero.
+  const page = section.dataset.creature === "page" || opts.page;
+  if (!page && getComputedStyle(section).position === "static") section.style.position = "relative";
   sprite.classList.add("sd-creature");
+  if (page) sprite.classList.add("sd-creature--fixed");
 
   let W = 0, H = 0;
-  const pos = { x: 0, y: 0 }, prev = { x: 0, y: 0 }, aim = { x: 0, y: 0 };
-  let inside = false, t = 0, raf = 0, running = false, lastNow = 0, trail = null;
+  const pos = { x: 0, y: 0 }, prev = { x: 0, y: 0 }, aim = { x: 0, y: 0 }, last = { x: -1, y: -1 };
+  let inside = false, shown = true, t = 0, raf = 0, running = false, lastNow = 0, trail = null;
 
   const place = () => {
-    const r = section.getBoundingClientRect(); W = r.width; H = r.height;
+    if (page) { W = innerWidth; H = innerHeight; }
+    else { const r = section.getBoundingClientRect(); W = r.width; H = r.height; }
     if (!pos.x) {
       pos.x = prev.x = aim.x = W * 0.62; pos.y = prev.y = aim.y = H * 0.45;
       gsap.set(sprite, { x: pos.x, y: pos.y });
@@ -169,15 +176,16 @@ export function cursorCreature(section, opts = {}) {
   };
 
   if (reducedMotion()) {
+    if (page) { sprite.style.display = "none"; return null; }
     place();
     gsap.set(sprite, { x: W * 0.8, y: H * 0.66, xPercent: -50, yPercent: -50 });
     return null;
   }
 
   const canvas = document.createElement("canvas");
-  canvas.className = "sd-ink";
+  canvas.className = page ? "sd-ink sd-ink--fixed" : "sd-ink";
   canvas.setAttribute("aria-hidden", "true");
-  section.prepend(canvas);
+  if (page) document.body.append(canvas); else section.prepend(canvas);
   trail = inkTrail(canvas, color, edge);
   if (!trail) canvas.remove();
 
@@ -187,22 +195,49 @@ export function cursorCreature(section, opts = {}) {
   const qr = gsap.quickTo(sprite, "rotation", { duration: 0.5, ease: "power2.out" });
   const qs = gsap.quickTo(sprite, "scaleX", { duration: 0.4, ease: "power2.out" });
 
+  // the part of the element that is on screen, in the coordinate space the creature uses
+  const zone = () => {
+    if (!page) return { top: 0, bottom: H };
+    const r = section.getBoundingClientRect();
+    return { top: Math.max(0, r.top), bottom: Math.min(H, r.bottom) };
+  };
+  const checkInside = () => {
+    if (last.x < 0) return (inside = false);
+    if (!page) return inside;
+    const z = zone();
+    inside = last.y > z.top && last.y < z.bottom;
+    if (inside) { aim.x = last.x; aim.y = last.y; }
+    return inside;
+  };
+
   if (!isTouch()) {
-    section.addEventListener("pointermove", (e) => {
-      const r = section.getBoundingClientRect();
-      aim.x = e.clientX - r.left; aim.y = e.clientY - r.top; inside = true;
-    });
-    section.addEventListener("pointerleave", () => (inside = false));
+    if (page) {
+      addEventListener("pointermove", (e) => { last.x = e.clientX; last.y = e.clientY; checkInside(); }, { passive: true });
+      addEventListener("scroll", checkInside, { passive: true });
+      document.documentElement.addEventListener("pointerleave", () => { inside = false; last.x = -1; });
+    } else {
+      section.addEventListener("pointermove", (e) => {
+        const r = section.getBoundingClientRect();
+        aim.x = e.clientX - r.left; aim.y = e.clientY - r.top; inside = true;
+      });
+      section.addEventListener("pointerleave", () => (inside = false));
+    }
   }
 
   function loop(now) {
     raf = requestAnimationFrame(loop);
     const dt = Math.min(0.05, (now - lastNow) / 1000 || 0.016);
     lastNow = now; t += dt;
-    if (!inside) { // wander: a slow lissajous path
+    const z = zone(), visibleH = z.bottom - z.top;
+    // page mode: hide when only a sliver of the element is on screen (e.g. the hero fills the view)
+    const want = !page || visibleH > Math.min(240, H * 0.3);
+    if (want !== shown) { shown = want; gsap.to(sprite, { autoAlpha: want ? 1 : 0, duration: 0.4, overwrite: "auto" }); }
+    if (!inside) { // wander: a slow lissajous path inside the visible part
+      const mid = (z.top + z.bottom) / 2, span = Math.max(40, visibleH * 0.28);
       aim.x = W * (0.5 + 0.3 * Math.sin(t * 0.43));
-      aim.y = H * (0.5 + 0.25 * Math.sin(t * 0.71 + 1.2));
+      aim.y = mid + span * Math.sin(t * 0.71 + 1.2);
     }
+    if (page && !shown) aim.y = Math.max(aim.y, z.top + 60);
     qx(aim.x); qy(aim.y);
     prev.x = pos.x; prev.y = pos.y;
     pos.x = gsap.getProperty(sprite, "x"); pos.y = gsap.getProperty(sprite, "y");
@@ -212,14 +247,17 @@ export function cursorCreature(section, opts = {}) {
     qs(1 + Math.min(0.18, speed / 6000));
     if (trail) {
       const p0 = [prev.x / W, 1 - prev.y / H], p1 = [pos.x / W, 1 - pos.y / H];
-      const force = Math.min(0.6, 0.05 + speed / 3600);
-      trail.frame(t, p0, p1, [gsap.utils.clamp(-1, 1, vx / 1500), gsap.utils.clamp(-1, 1, -vy / 1500)], force, opts.radius || +(section.dataset.trailSize || Math.min(60, W * 0.04)));
+      const force = shown ? Math.min(0.6, 0.05 + speed / 3600) : 0;
+      trail.frame(t, p0, p1, [gsap.utils.clamp(-1, 1, vx / 1500), gsap.utils.clamp(-1, 1, -vy / 1500)], force, opts.radius || Math.min(+(section.dataset.trailSize || 60), W * 0.05));
     }
   }
   const start = () => { if (!running) { running = true; lastNow = performance.now(); raf = requestAnimationFrame(loop); } };
-  const stop = () => { running = false; cancelAnimationFrame(raf); };
-  new ResizeObserver(place).observe(section);
-  new IntersectionObserver(([e]) => (e.isIntersecting ? start() : stop())).observe(section);
+  const stop = () => { running = false; cancelAnimationFrame(raf); if (trail && page) trail.frame(t, [0, 0], [0, 0], [0, 0], 0, 1); };
+  if (page) addEventListener("resize", place); else new ResizeObserver(place).observe(section);
+  new IntersectionObserver(([e]) => {
+    if (e.isIntersecting) start();
+    else { stop(); if (page) { shown = false; gsap.set(sprite, { autoAlpha: 0 }); } }
+  }).observe(section);
   document.addEventListener("visibilitychange", () => (document.hidden ? stop() : start()));
   place();
   return { stop, start };

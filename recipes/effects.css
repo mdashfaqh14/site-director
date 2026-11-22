@@ -60,7 +60,9 @@ canvas[data-particles] { position: absolute; inset: 0; width: 100%; height: 100%
    give the content position:relative; z-index:2. */
 .sd-ink { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1; mix-blend-mode: var(--sd-ink-blend, normal); }
 .sd-creature { position: absolute; left: 0; top: 0; z-index: 3; pointer-events: none; will-change: transform; user-select: none; }
-[data-creature] { overflow: hidden; }
+[data-creature]:not([data-creature="page"]) { overflow: hidden; }
+.sd-ink--fixed { position: fixed; z-index: 40; }
+.sd-creature--fixed { position: fixed; z-index: 41; }
 
 /* ---------- Hide UI toggle (ui-toggle.js) ---------- */
 /* the transition is only switched on once the toggle is used, so it never fights GSAP entrance tweens */

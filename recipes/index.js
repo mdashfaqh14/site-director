@@ -32,6 +32,7 @@ export async function initSite({ motion = "precise", smooth = {}, preloader = fa
   // Canvas recipes are lazy-loaded only when their markup is on the page.
   if (document.querySelector("canvas[data-glyph-window]")) (await import("./glyph-window.js")).initGlyphWindows();
   if (document.querySelector("canvas[data-particles]")) (await import("./particles.js")).initParticles();
+  if (document.querySelector("canvas[data-image-particles]")) (await import("./image-particles.js")).initImageParticles();
   if (document.querySelector("[data-creature]")) (await import("./cursor-creature.js")).initCreatures();
   const threeEls = document.querySelectorAll("[data-three]");
   if (threeEls.length) {
@@ -51,3 +52,4 @@ export { runPreloader } from "./preloader.js";
 export { transition } from "./transitions.js";
 export { shaderBackground } from "./shader-bg.js";
 export { initUiToggle } from "./ui-toggle.js";
+export { soundscape } from "./soundscape.js";

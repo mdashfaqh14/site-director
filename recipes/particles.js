@@ -16,7 +16,13 @@
  *     data-glyphs="abc"                  used by glyph / mix
  *     data-drift="up"                    up | down | left | right
  *     data-speed="1"
- *     data-glow></canvas>                soft bloom around dots (costs a little more)
+ *     data-glow                          soft bloom around dots (costs a little more)
+ *     data-scale="1"                     size multiplier
+ *     data-touch="24"></canvas>          make particles touchable: radius in px; pass onTouch(p) in JS
+ *
+ * Touchable particles flash and swell when the pointer passes through them, then call
+ * opts.onTouch({ x, y, nx, ny, z, color }) (nx/ny are 0–1 across the canvas). Each particle has a
+ * cooldown so one sweep plays a phrase, not a buzz. Used with soundscape.js for musical hovering.
  *
  * Performance: plain 2D canvas, DPR capped at 2, pauses off-screen / hidden; reduced motion = still frame.
  */
@@ -33,12 +39,15 @@ export function particles(canvas, opts = {}) {
     speed: +(d.speed || 1),
     glow: "glow" in d,
     font: d.font || "serif",
+    touch: +(d.touch || 0),
+    scale: +(d.scale || 1), // size multiplier
+    onTouch: null,
     ...opts,
   };
   const ctx = canvas.getContext("2d");
   const dir = { up: [0, -1], down: [0, 1], left: [-1, 0], right: [1, 0] }[o.drift] || [0, -1];
   let W, H, dpr, list = [], raf = 0, running = false, last = 0;
-  const ptr = { x: -9999, y: -9999 };
+  const ptr = { x: -9999, y: -9999, moved: 0 };
 
   const make = (anywhere) => {
     const z = Math.random() ** 1.6; // more far particles than near ones
@@ -46,13 +55,13 @@ export function particles(canvas, opts = {}) {
     const p = {
       z, shape,
       x: Math.random() * W, y: Math.random() * H,
-      size: (shape === "dot" ? 0.8 + z * 2.2 : 3 + z * 9),
+      size: (shape === "dot" ? 0.8 + z * 2.2 : 3 + z * 9) * o.scale,
       v: (8 + z * 28) * o.speed,
       sway: 8 + Math.random() * 22, phase: Math.random() * Math.PI * 2, freq: 0.3 + Math.random() * 0.6,
       rot: Math.random() * Math.PI * 2, spin: (Math.random() - 0.5) * 0.8,
       color: o.colors[(Math.random() * o.colors.length) | 0],
       glyph: o.glyphs[(Math.random() * o.glyphs.length) | 0],
-      alpha: 0.25 + z * 0.65, ox: 0, oy: 0,
+      alpha: 0.25 + z * 0.65, ox: 0, oy: 0, flash: 0, cool: 0,
     };
     if (!anywhere) { // enter from the upstream edge
       if (dir[1] < 0) p.y = H + 20; if (dir[1] > 0) p.y = -20;
@@ -74,11 +83,17 @@ export function particles(canvas, opts = {}) {
   function drawOne(p, t) {
     const sx = Math.sin(t * p.freq + p.phase) * p.sway;
     const x = p.x + (dir[1] ? sx : 0) + p.ox, y = p.y + (dir[0] ? sx : 0) + p.oy;
-    ctx.globalAlpha = p.alpha;
+    p.dx = x; p.dy = y; // where it was actually drawn (for touch tests)
+    const fl = p.flash;
+    ctx.globalAlpha = Math.min(1, p.alpha + fl * 0.6);
     ctx.fillStyle = p.color;
     if (p.shape === "dot") {
-      if (o.glow) { ctx.globalAlpha = p.alpha * 0.08; ctx.beginPath(); ctx.arc(x, y, p.size * 2.6, 0, 7); ctx.fill(); ctx.globalAlpha = p.alpha; }
-      ctx.beginPath(); ctx.arc(x, y, p.size, 0, 7); ctx.fill();
+      if (o.glow || fl > 0.02) { ctx.globalAlpha = p.alpha * 0.08 + fl * 0.22; ctx.beginPath(); ctx.arc(x, y, p.size * (2.6 + fl * 5), 0, 7); ctx.fill(); ctx.globalAlpha = Math.min(1, p.alpha + fl * 0.6); }
+      ctx.beginPath(); ctx.arc(x, y, p.size * (1 + fl * 1.4), 0, 7); ctx.fill();
+      if (fl > 0.05) { // expanding ring
+        ctx.globalAlpha = fl * 0.5; ctx.strokeStyle = p.color; ctx.lineWidth = 1;
+        ctx.beginPath(); ctx.arc(x, y, p.size * 2 + (1 - fl) * 26, 0, 7); ctx.stroke();
+      }
       return;
     }
     ctx.save();
@@ -107,8 +122,16 @@ export function particles(canvas, opts = {}) {
         p.x += dir[0] * p.v * dt; p.y += dir[1] * p.v * dt;
         // pointer pushes, then the offset eases back
         const dx = p.x + p.ox - ptr.x, dy = p.y + p.oy - ptr.y, dd = dx * dx + dy * dy;
-        if (dd < 14400) { const f = (1 - Math.sqrt(dd) / 120) * 90 * dt * (0.4 + p.z); p.ox += (dx / (Math.sqrt(dd) + 1)) * f * 6; p.oy += (dy / (Math.sqrt(dd) + 1)) * f * 6; }
+        if (dd < 14400 && !o.touch) { /* touchable particles stay put so they can be played */ const f = (1 - Math.sqrt(dd) / 120) * 90 * dt * (0.4 + p.z); p.ox += (dx / (Math.sqrt(dd) + 1)) * f * 6; p.oy += (dy / (Math.sqrt(dd) + 1)) * f * 6; }
         p.ox *= 0.96; p.oy *= 0.96;
+        p.flash *= 0.93; p.cool -= dt;
+        if (o.touch && p.cool <= 0 && p.dx !== undefined && performance.now() - ptr.moved < 100) {
+          const tx = p.dx - ptr.x, ty = p.dy - ptr.y, tr = o.touch + p.size;
+          if (tx * tx + ty * ty < tr * tr) {
+            p.flash = 1; p.cool = 1.4;
+            o.onTouch?.({ x: p.dx, y: p.dy, nx: p.dx / W, ny: p.dy / H, z: p.z, color: p.color });
+          }
+        }
         if (p.y < -40 || p.y > H + 40 || p.x < -40 || p.x > W + 40) list[i] = make(false);
       }
       drawOne(list[i], t);
@@ -125,7 +148,7 @@ export function particles(canvas, opts = {}) {
   const start = () => { if (!running && !reducedMotion()) { running = true; last = performance.now(); raf = requestAnimationFrame(loop); } };
   const stop = () => { running = false; cancelAnimationFrame(raf); };
 
-  window.addEventListener("pointermove", (e) => { const r = canvas.getBoundingClientRect(); ptr.x = e.clientX - r.left; ptr.y = e.clientY - r.top; }, { passive: true });
+  window.addEventListener("pointermove", (e) => { const r = canvas.getBoundingClientRect(); ptr.x = e.clientX - r.left; ptr.y = e.clientY - r.top; ptr.moved = performance.now(); }, { passive: true });
   const io = new IntersectionObserver(([e]) => (e.isIntersecting ? start() : stop()));
   const ro = new ResizeObserver(resize);
   document.addEventListener("visibilitychange", () => (document.hidden ? stop() : start()));
@@ -134,5 +157,6 @@ export function particles(canvas, opts = {}) {
 }
 
 export function initParticles(root = document) {
-  return [...root.querySelectorAll("canvas[data-particles]")].map((c) => particles(c));
+  // data-particles="manual" is skipped, for layers you start yourself (e.g. with onTouch)
+  return [...root.querySelectorAll('canvas[data-particles]:not([data-particles="manual"])')].map((c) => particles(c));
 }

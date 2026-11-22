@@ -87,7 +87,7 @@ export function hoverPreview(root = document) {
     list.querySelectorAll("[data-preview]").forEach((item) => {
       item.addEventListener("pointerenter", (e) => {
         // Place it at the pointer immediately (covers lists scrolling under a still cursor).
-        if (!gsap.getProperty(frame, "autoAlpha")) gsap.set(frame, { x: e.clientX, y: e.clientY });
+        if (!+gsap.getProperty(frame, "opacity")) gsap.set(frame, { x: e.clientX, y: e.clientY });
         img.src = item.dataset.preview;
         gsap.to(frame, { autoAlpha: 1, scale: 1, duration: 0.35, ease: "power3.out" });
       });
@@ -97,11 +97,15 @@ export function hoverPreview(root = document) {
     // Scrolling moves the list without firing pointerleave, so re-check what is under the
     // last known pointer position and hide the preview once it is no longer the list.
     let px = -1, py = -1;
-    window.addEventListener("pointermove", (e) => ((px = e.clientX), (py = e.clientY)), { passive: true });
+    window.addEventListener("pointermove", (e) => {
+      px = e.clientX; py = e.clientY;
+      // a list that scrolled away under a still pointer never gets pointerleave: catch it on the next move
+      if (+gsap.getProperty(frame, "opacity") && !list.contains(e.target)) hide();
+    }, { passive: true });
     window.addEventListener(
       "scroll",
       () => {
-        if (!gsap.getProperty(frame, "autoAlpha")) return;
+        if (!+gsap.getProperty(frame, "opacity")) return;
         const under = document.elementFromPoint(px, py);
         if (!under || !list.contains(under)) hide();
       },

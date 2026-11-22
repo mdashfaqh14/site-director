@@ -40,8 +40,10 @@ The art direction decides the motion **personality** (`setMotion`). The brief de
 | Shader background | `canvas[data-shader="flow\|grid\|grain"]` | Dark Signal, Immersive, strategy C | pages with a 3D scene | medium |
 | Three.js hero | `[data-three="knot\|blob\|monolith"]` | Immersive (required), product turntables | pages with a shader bg | high |
 | Glyph window | `canvas[data-glyph-window]` | Immersive, Retro, culture/language brands (doorway, moon, porthole) | more than one per page; behind text | medium |
-| Ambient particles | `canvas[data-particles]` | illustrated heroes, Organic, Cinematic | Swiss, Brutalist, over body text | low |
-| Cursor creature + ink trail | `[data-creature]` + `[data-creature-sprite]` | artist portfolios, playful brands with a real character, final CTA | forms, SaaS, more than one section | medium |
+| Image particles | `canvas[data-image-particles]` (`data-glyphs` = written in text, `data-hover="fall"` = letters pour down) | one focal object made of dots or lines of text that the cursor scatters or pours (moon, doorway, planet, logo) | large photos, several per page | medium |
+| Soundscape | `soundscape()` + `[data-sound-toggle]` | immersive / illustrated scenes; every sound shares one scale, tempo grid and echo so it's always in sync | SaaS, docs, autoplay; always off by default | low |
+| Ambient particles | `canvas[data-particles]` (`data-touch` makes them playable) | illustrated heroes, Organic, Cinematic | Swiss, Brutalist, over body text | low |
+| Cursor creature + ink trail | `[data-creature]` (or `="page"` on a wrapper to roam every section) + `[data-creature-sprite]` | artist portfolios, playful brands with a real character, final CTA | forms, SaaS, more than one section | medium |
 | Hide UI toggle | `[data-ui-toggle]` + `[data-ui]` | image-led heroes | text-led heroes | low |
 | Border trace | `.sd-trace` | Dark Signal feature cards (1–2 max) | everything | low |
 | Film grain | `.sd-grain` | Cinematic, Editorial, Organic | Swiss, Dark Signal UI | low |
